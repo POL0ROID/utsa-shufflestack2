@@ -12,7 +12,8 @@ const log = require('koa-logger');
 
 const app = new Koa();
 const frontpage = new Koa();
-frontpage.use(serve(path.join(__dirname, "/static/build/")));
+frontpage.use(serve(path.join(__dirname, "../static/build/")));
+console.log(path.join(__dirname, "../static/build/"));
 app.use(mount(frontpage));
 
 let httpssl = https.createServer(
@@ -67,7 +68,7 @@ router.post("/query", async (ctx, next) => {
 	});
 });
 
-router.get("/query", async (ctx, next) => {
+router.get("/", async (ctx, next) => {
 	console.log("Get received.");
 });
 
