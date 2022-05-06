@@ -1,0 +1,12 @@
+import psycopg2
+conn = psycopg2.connect(user='Flamdini', password='0Mn0mn0m!', host='stackpost.crymkd1bcdxk.us-east-1.rds.amazonaws.com', port='5432', database='stacks')
+cursor = conn.cursor()
+cursor.execute(f"SELECT table_name FROM information_schema.tables WHERE table_schema = 'public' ORDER BY table_name;")
+print(cursor.fetchall())
+cursor.execute(f"SELECT pg_size_pretty(pg_database_size('stacks') );")
+print(cursor.fetchall())
+cursor.execute(f"SELECT pg_size_pretty(pg_table_size('stackoverflow') );")
+print("StackOverflow:")
+print( cursor.fetchall())
+cursor.close()
+conn.close()
