@@ -12,7 +12,7 @@ const log = require('koa-logger');
 
 const app = new Koa();
 const frontpage = new Koa();
-frontpage.use(serve(path.join(__dirname, "/frontend/src/build/")));
+frontpage.use(serve(path.join(__dirname, "/static/build/")));
 app.use(mount(frontpage));
 
 let httpssl = https.createServer(
@@ -30,7 +30,7 @@ app.use( cors() );
 app.use( log() );
 
 const router = new Router();
-router.post("/", async (ctx, next) => {
+router.post("/query", async (ctx, next) => {
 	const client = new Client({
 		user: 'Flamdini',
 		host: 'stackpost.crymkd1bcdxk.us-east-1.rds.amazonaws.com',
