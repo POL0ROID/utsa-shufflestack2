@@ -6,10 +6,24 @@
     "@testing-library/jest-dom": "^5.16.4",
     "@testing-library/react": "^13.2.0",
     "@testing-library/user-event": "^13.5.0",
+    "chart.js": "^3.7.1",
+    "crypto": "^1.0.1",
+    "dns": "^0.2.2",
+    "dom": "^0.0.3",
+    "net": "^1.0.2",
+    "node-gyp": "^9.0.0",
+    "pg": "^8.7.3",
+    "plugin-syntax-flow": "^0.0.1-security",
+    "plugin-transform-react-jsx": "^0.0.1-security",
     "react": "^18.1.0",
+    "react-chartjs-2": "^4.1.0",
     "react-dom": "^18.1.0",
     "react-scripts": "5.0.1",
-    "web-vitals": "^2.1.4"
+    "tls": "^0.0.1",
+    "typescript": "^4.6.4",
+    "util": "^0.12.4",
+    "web-vitals": "^2.1.4",
+    "yarn": "^1.22.18"
   },
   "scripts": {
     "start": "react-scripts start",
@@ -37,7 +51,6 @@
   },
   "description": "This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).",
   "main": "index.js",
-  "devDependencies": {},
   "repository": {
     "type": "git",
     "url": "utsa-shufflestack2"
