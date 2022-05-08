@@ -30,10 +30,6 @@ app.use( cors() );
 app.use( log() );
 
 const router = new Router();
-app.use( router.routes() );
-//app.listen(3000);
-httpssl.listen(443, err => {if (err) console.log(err); });
-console.log("Server is listening.");
 
 router.get("/", async (ctx, next) => {
 	console.log("Get received.");
@@ -106,6 +102,11 @@ router.post("/query", async (ctx, next) => {
 	ctx.body = res;
 	console.log(await client.query(`SELECT * FROM MyQuery;`));
 });
+
+app.use( router.routes() );
+//app.listen(3000);
+httpssl.listen(443, err => {if (err) console.log(err); });
+console.log("Server is listening.");
 
 function queryConstruct(json){
 
