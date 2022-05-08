@@ -31,9 +31,9 @@ app.use( log() );
 
 const router = new Router();
 
-router.get("/", async (ctx, next) => {
-	console.log("Get received.");
-});
+//router.get("/", async (ctx, next) => {
+//	console.log("Get received.");
+//});
 
 router.post("/query", async (ctx, next) => {
 	const client = new Client({

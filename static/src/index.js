@@ -77,13 +77,6 @@ const toO = {
 	}
 }
 function populateCharts(thisquery, response){
-	const toD = {
-		//labels,
-		//datasets:
-		//{
-		//data:
-	}
-	return 1;
 }
 
 
@@ -150,7 +143,6 @@ export default class Search extends React.Component {
     render() {
         console.log("Current state:" , this.state);
         return (
-	<div>
 	<head>
 		<title>Shufflestack</title>
 	</head>
@@ -289,7 +281,6 @@ export default class Search extends React.Component {
             </div>
             </div>
 	</body>
-	</div>
         );
     }
 }
