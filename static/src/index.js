@@ -136,8 +136,12 @@ populateCharts(thisquery, res);
 render() {
 console.log("Current state:" , this.state);
 return (
-	<>
-	<body style="background-color: #282c34;">
+	<body style={{background-color: #282c34; margin: 0;
+		font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
+		  'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
+		  sans-serif;
+		-webkit-font-smoothing: antialiased;
+		-moz-osx-font-smoothing: grayscale;}}>
             <div style={{textAlign: 'center'}}>
                 <div style={{margin: '4em'}} />
                 <h1>Shufflestack: StackExchange Analytic Search</h1>
@@ -272,7 +276,6 @@ return (
             </div>
             </div>
 	</body>
-	</>
         );
     }
 }
