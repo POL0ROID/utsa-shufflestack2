@@ -136,12 +136,10 @@ populateCharts(thisquery, res);
 render() {
 console.log("Current state:" , this.state);
 return (<>
-	<body style={{backgroundColor: '#282c34'; margin: '0';
-		fontFamily: AppleSystem, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
-		  'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
-		  sansSerif;
-		WebkitFontSmoothing: antialiased;
-		MozOsxFontSmoothing: grayscale;}}>
+	<body style={{backgroundColor: '#282c34', margin: '0',
+		fontFamily: "AppleSystem, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue', sansSerif,",
+		WebkitFontSmoothing: antialiased,
+		MozOsxFontSmoothing: grayscale}}>
             <div style={{textAlign: 'center'}}>
                 <div style={{margin: '4em'}} />
                 <h1>Shufflestack: StackExchange Analytic Search</h1>
