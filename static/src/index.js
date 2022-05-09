@@ -146,6 +146,7 @@ populateCharts(thisquery, res);
 render() {
 console.log("Current state:" , this.state);
 return (
+	<>
 		<Helmet>
 			<title>{TITLE}</title>
 		</Helmet>
@@ -284,6 +285,7 @@ return (
             </div>
             </div>
 	</body>
+	</>
         );
     }
 }
