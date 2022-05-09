@@ -1,5 +1,4 @@
 import React, { Component } from 'react';
-import { Helmet } from 'react-helmet';
 //import { Chart as ChartJS, CategoryScale, LinearScale, BarElement, PointElement, LineElement, ArcElement, Title,  Tooltip, Legend } from 'chart.js';
 //import { Line, Doughnut, Bars } from 'react-chartjs-2';
 import ReactDOM from 'react-dom/client';
@@ -7,7 +6,6 @@ import './index.css';
 import './App.css';
 import reportWebVitals from './reportWebVitals';
 
-const TITLE = 'StackSearch';
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
@@ -147,9 +145,6 @@ render() {
 console.log("Current state:" , this.state);
 return (
 	<>
-		<Helmet>
-			<title>{TITLE}</title>
-		</Helmet>
 	<body style="background-color: #282c34;">
             <div style={{textAlign: 'center'}}>
                 <div style={{margin: '4em'}} />
