@@ -1,10 +1,13 @@
 import React, { Component } from 'react';
-import { Chart as ChartJS, CategoryScale, LinearScale, BarElement, PointElement, LineElement, ArcElement, Title,  Tooltip, Legend } from 'chart.js';
+import { Helmet } from 'react-helmet';
+//import { Chart as ChartJS, CategoryScale, LinearScale, BarElement, PointElement, LineElement, ArcElement, Title,  Tooltip, Legend } from 'chart.js';
 //import { Line, Doughnut, Bars } from 'react-chartjs-2';
 import ReactDOM from 'react-dom/client';
 import './index.css';
 import './App.css';
 import reportWebVitals from './reportWebVitals';
+
+const TITLE = 'StackSearch';
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
@@ -19,9 +22,9 @@ const datelabels = [];
 for (const year of years){
 	for (const month of months){
 	datelabels.push(year + '-' + month);
+	}
 }
-}
-ChartJS.register(CategoryScale, LinearScale, BarElement, ArcElement, PointElement, LineElement, Title, Tooltip, Legend);
+//ChartJS.register(CategoryScale, LinearScale, BarElement, ArcElement, PointElement, LineElement, Title, Tooltip, Legend);
 
 const acO = {
 plugins: {
@@ -143,12 +146,12 @@ populateCharts(thisquery, res);
 render() {
 console.log("Current state:" , this.state);
 return (
-<head>
-		<title>Shufflestack</title>
-</head>
 	<body style="background-color: #282c34;">
             <div style={{textAlign: 'center'}}>
                 <div style={{margin: '4em'}} />
+		<Helmet>
+			<title>{TITLE}</title>
+		</Helmet>
                 <h1>Shufflestack: StackExchange Analytic Search</h1>
 			<p>A data tool to facilitate research of the StackExchange Q&A database, best used to compare patterns between its communities and between queries. <br />
             This database is current up to March 7, 2022 and made available through the Internet Archive under a Creative Commons license (CC-BY-SA).<br />
