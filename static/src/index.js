@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
-import { Chart, CategoryScale, LinearScale, BarElement, PointElement, LineElement, ArcElement, Title,  Tooltip, Legend } from 'chart.js';
-import { Line, Doughnut, Bars } from 'react-chartjs-2';
+import { Chart as ChartJS, CategoryScale, LinearScale, BarElement, PointElement, LineElement, ArcElement, Title,  Tooltip, Legend } from 'chart.js';
+//import { Line, Doughnut, Bars } from 'react-chartjs-2';
 import ReactDOM from 'react-dom/client';
 import './index.css';
 import './App.css';
@@ -18,134 +18,134 @@ const months = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12];
 const datelabels = [];
 for (const year of years){
 	for (const month of months){
-		datelabels.push(year + '-' + month);
-	}
+	datelabels.push(year + '-' + month);
 }
-Chart.register(CategoryScale, LinearScale, BarElement, ArcElement, PointElement, LineElement, Title, Tooltip, Legend);
+}
+ChartJS.register(CategoryScale, LinearScale, BarElement, ArcElement, PointElement, LineElement, Title, Tooltip, Legend);
 
 const acO = {
-	plugins: {
-		title: {
-			display: true,
-			text: "Number of Answers VS Instances of Each"
-		}
+plugins: {
+	title: {
+		display: true,
+		text: "Number of Answers VS Instances of Each"
 	}
+}
 };
 
 const vcO = {
-	plugins: {
-		title: {
-			display: true,
-			text: "Number of Views VS Instances of Each"
-		}
+plugins: {
+	title: {
+		display: true,
+		text: "Number of Views VS Instances of Each"
 	}
+}
 };
 
 const scO = {
-	plugins: {
-		title: {
-			display: true,
-			text: "Score VS Instances of Each"
-		}
+plugins: {
+	title: {
+		display: true,
+		text: "Score VS Instances of Each"
 	}
+}
 };
 
 const uaO = {
-	plugins: {
-		title: {
-			display: true,
-			text: "Unanswered Questions Over Time"
-		}
+plugins: {
+	title: {
+		display: true,
+		text: "Unanswered Questions Over Time"
 	}
+}
 }
 
 const daO = {
-	plugins: {
-		title: {
-			display: true,
-			text: "Posts Over Time"
-		}
+plugins: {
+	title: {
+		display: true,
+		text: "Posts Over Time"
 	}
+}
 }
 
 const toO = {
-	plugins: {
-		title: {
-			display: true,
-			text: "Matching Posts"
-		}
+plugins: {
+	title: {
+		display: true,
+		text: "Matching Posts"
 	}
+}
 }
 function populateCharts(thisquery, response){
 }
 
 
 export default class Search extends React.Component {
-    constructor(props) {
-        super(props);
-        this.state = {
-            includequestion: false,
-            includesatisfied: false,
-            includeunsatisfied: false,
-            viewsmin: "",
-            viewsmax: "",
-            includeanswer: false,
-            includeaccepted: false,
-            includeother: false,
-            datemin: "",
-            scoremin: "",
-            datemax: "",
-            scoremax: "",
-            title: "",
-            body: "",
-            tags: "", 
-            table: "writers",
-	    advsearch: false,
-	    charts: false
-        };
-        this.handleSubmit = this.handleSubmit.bind(this);
-      }
+constructor(props) {
+super(props);
+this.state = {
+    includequestion: false,
+    includesatisfied: false,
+    includeunsatisfied: false,
+    viewsmin: "",
+    viewsmax: "",
+    includeanswer: false,
+    includeaccepted: false,
+    includeother: false,
+    datemin: "",
+    scoremin: "",
+    datemax: "",
+    scoremax: "",
+    title: "",
+    body: "",
+    tags: "", 
+    table: "writers",
+    advsearch: false,
+    charts: false
+};
+this.handleSubmit = this.handleSubmit.bind(this);
+}
 
-    handleChange = (event) => {
-        let t = {};
-        const target = event.target;
-        const value = (target.type === 'checkbox') ? target.checked : target.value;
-        t[target.id] = value;
-        this.setState( { ...t } );
-    }
+handleChange = (event) => {
+let t = {};
+const target = event.target;
+const value = (target.type === 'checkbox') ? target.checked : target.value;
+t[target.id] = value;
+this.setState( { ...t } );
+}
 
-    handleSubmit = async (event) => {
-        alert("Submitted")
-        event.preventDefault();            
-        const url = 'https://zcxlabs.redtype.consulting/query'
-        // const url = 'http://ec2-3-94-209-176.compute-1.amazonaws.com:3001/stackserve.js'
-        // const url = 'localhost:3001/stackserve.js'
-        const options = {
-            method: 'POST',
-            headers: {
-                'Accept': '*/*',
-                'Content-Type': 'application/json;charset=UTF-8',
-                'Access-Control-Allow-Origin': '*',
-                'Access-Control-Allow-Headers': 'Origin, X-Requested-With, Content-Type, Accept',
-                'Access-Control-Allow-Methods': 'POST',
-                'Access-Control-Allow-Credentials': true,
-            },
-            body: JSON.stringify(this.state)
-        };
-	const thisquery = this.state;
-	const res =
-        await fetch(url, options)
-            .then(response => res);
-	console.log(res[0].rows);
-	populateCharts(thisquery, res);
-    }
+handleSubmit = async (event) => {
+alert("Submitted")
+event.preventDefault();            
+const url = 'https://zcxlabs.redtype.consulting/query'
+// const url = 'http://ec2-3-94-209-176.compute-1.amazonaws.com:3001/stackserve.js'
+// const url = 'localhost:3001/stackserve.js'
+const options = {
+    method: 'POST',
+    headers: {
+	'Accept': '*/*',
+	'Content-Type': 'application/json;charset=UTF-8',
+	'Access-Control-Allow-Origin': '*',
+	'Access-Control-Allow-Headers': 'Origin, X-Requested-With, Content-Type, Accept',
+	'Access-Control-Allow-Methods': 'POST',
+	'Access-Control-Allow-Credentials': true,
+    },
+    body: JSON.stringify(this.state)
+};
+const thisquery = this.state;
+const res =
+await fetch(url, options)
+    .then(response => res);
+console.log(res[0].rows);
+populateCharts(thisquery, res);
+}
 
-    render() {
-        console.log("Current state:" , this.state);
-        return (
-	<head>
+render() {
+console.log("Current state:" , this.state);
+return (
+<head>
 		<title>Shufflestack</title>
-	</head>
+</head>
 	<body style="background-color: #282c34;">
             <div style={{textAlign: 'center'}}>
                 <div style={{margin: '4em'}} />
