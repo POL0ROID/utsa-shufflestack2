@@ -135,7 +135,7 @@ populateCharts(thisquery, res);
 
 render() {
 console.log("Current state:" , this.state);
-return (
+return (<>
 	<body style={{background-color: #282c34; margin: 0;
 		font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
 		  'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
@@ -276,6 +276,7 @@ return (
             </div>
             </div>
 	</body>
+	</>
         );
     }
 }
