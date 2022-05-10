@@ -9,6 +9,7 @@ const parser = require('koa-bodyparser');
 const serve = require('koa-static');
 const mount = require('koa-mount');
 const log = require('koa-logger');
+const client = require('pg/lib/native/client');
 
 const app = new Koa();
 const frontpage = new Koa();
@@ -48,7 +49,11 @@ router.post("/query", async (ctx, next) => {
 	const jstring = JSON.stringify(ctx.request.body);
 	const json = JSON.parse(jstring);
 	const basetable = queryConstruct(json);
-	const qandatable = `CREATE TEMP TABLE MyQuery2 AS (SELECT PostTypeId, ParentOrChild, COUNT(*) AS answers FROM MyQuery GROUP BY ParentOrChild, PostTypeId);`;
+	const qandatable = `CREATE TEMP TABLE MyQuery2 AS (SELECT PostTypeId, CASE WHEN ParentOrChild IS NULL THEN 0 END ParentOrChild, COUNT(*) AS answers FROM MyQuery GROUP BY ParentOrChild, PostTypeId);`;
+	const zeroquery = {
+		text: `SELECT CASE WHEN Id NOT IN (SELECT ParentOrChild FROM MyQuery WHERE PostTypeId = 2) THEN 0 ELSE 1 AS include, COUNT(*) FROM MyQuery WHERE include = 0`, //FUCK
+		rowMode: `array`
+	};
 	const qandaquery = {
 		text: `SELECT answers, COUNT(*) FROM MyQuery2 WHERE PostTypeId = 2 GROUP BY answers ORDER BY answers;`,
 		rowMode: `array`
@@ -57,12 +62,12 @@ router.post("/query", async (ctx, next) => {
 		text: `SELECT ViewCount, COUNT(*) FROM MyQuery WHERE ViewCount IS NOT NULL GROUP BY ViewCount ORDER BY ViewCount;`,
 		rowMode: `array`
 	};
-	const unsatquery = {
-		text: `SELECT COUNT(*) FROM MyQuery WHERE PostTypeId = 1 AND ParentOrChild IS NULL;`,
+	const unansquery = {
+		text: `SELECT year, month, COUNT(*) FROM MyQuery WHERE PostTypeId = 1 AND (Id NOT IN (SELECT ParentOrChild FROM MyQuery WHERE PostTypeId = 2 AND Score > 0) AND ParentOrChild IS NULL) GROUP BY year, month ORDER BY year, month;`,
 		rowMode: `array`
 	};
 	const astotquery = {
-		text: `SELECT year, month, COUNT(*) FROM MyQuery WHERE PostTypeId = 1 AND Id NOT IN (SELECT ParentOrChild FROM MyQuery WHERE PostTypeId = 2) GROUP BY year, month ORDER BY year, month;`,
+		text: `SELECT COUNT(*) FROM MyQuery WHERE PostTypeId = 1 AND ParentOrChild IS NOT NULL;`,
 		rowMode: `array`
 	};
 	const totalquery = {
@@ -83,17 +88,12 @@ router.post("/query", async (ctx, next) => {
 	console.log("Temporary table formed.");
 	if(json.advsearch == true){
 		const res = [];
-		if(json.includequestion == true){
-			await client.query(qandatable);
-			res.push(await client.query(qandaquery));
-			res.push(await client.query(viewquery));
-			if(json.includeunsatisfied == true){
-				res.push(await client.query(unsatquery));
-			}
-		}
-		if(json.includeanswer == true && json.includeunsatisfied == true){
-			res.push(await client.query(astotquery));
-		}
+		await client.query(qandatable);
+		res.push(await client.query(zeroquery));
+		res.push(await client.query(qandaquery));
+		res.push(await client.query(viewquery));
+		res.push(await client.query(unansquery));
+		res.push(await client.query(astotquery));
 	}
 	res.push(await client.query(totalquery));
 	res.push(await client.query(scorequery));
@@ -114,8 +114,8 @@ function queryConstruct(json){
 	const viewsmax = parseInt(json.viewsmax) || "2147483647";
 	const scoremin = parseInt(json.scoremin) || "-2147483647";
 	const scoremax = parseInt(json.scoremax) || "2147483647";
-	const datemin = json.datemin == "" ? "0001-01-01T00:00:00" : json.datemin;
-	const datemax = json.datemax == "" ? "9999-12-12T23:59:59" : json.datemax;
+	const datemin = json.datemin == "" ? "2008-01-01T00:00:00" : json.datemin;
+	const datemax = json.datemax == "" ? "2022-03-31T23:59:59" : json.datemax;
 
 	const table = json.table;
 
