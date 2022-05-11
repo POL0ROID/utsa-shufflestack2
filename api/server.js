@@ -194,7 +194,7 @@ function fieldInjector(textarray, field, boolq, boola){
 };
 
 function viewgroupInjector(){
-	const outstring = `CASE WHEN ViewCOUNT IS NULL THEN NULL ` +
+	const outstring = `CASE WHEN ViewCount IS NULL THEN NULL ` +
 				`WHEN ViewCount BETWEEN 0 AND 99 THEN '<100' ` +
 				`WHEN ViewCount BETWEEN 100 AND 199 THEN '<200' ` +
 				`WHEN ViewCount BETWEEN 200 AND 299 THEN '<300' ` +
