@@ -260,17 +260,12 @@ export default class Search extends React.Component {
 							<option value="stackoverflow">Stack Overflow (very slow)</option></optgroup>
 							<optgroup label="Subjects"><option value="academia">Academia</option>
 							<option value="ai">AI</option>
-							<option value="ham">Amateur Radio</option>
 							<option value="android">Android Enthusiasts</option>
 							<option value="anime">Anime & Manga</option>
-							<option value="arduino">Arduino</option>
 							<option value="gaming">Arqade</option>
-							<option value="crafts">Arts & Crafts</option>
 							<option value="apple">Ask Different</option>
-							<option value="patents">Ask Patents</option>
 							<option value="askubuntu">Ask Ubuntu</option>
 							<option value="astronomy">Astronomy</option>
-							<option value="alcohol">Beer, Wine & Spirits</option>
 							<option value="hermeneutics">Biblical Hermeneutics</option>
 							<option value="blender">Blender</option>
 							<option value="boardgames">Board & Card Games</option>
@@ -280,10 +275,8 @@ export default class Search extends React.Component {
 							<option value="christianity">Christianity</option>
 							<option value="codegolf">Code Golf</option>
 							<option value="codereview">Code Review</option>
-							<option value="coffee">Coffee</option>
 							<option value="cogsci">CogSci</option>
 							<option value="scicomp">Computational Science</option>
-							<option value="cseducators">Computer Science Educators</option>
 							<option value="cs">Computer Science</option>
 							<option value="cstheory">Theoretical Computer Science</option>
 							<option value="craftcms">Craft CMS</option>
