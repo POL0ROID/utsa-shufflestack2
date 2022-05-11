@@ -45,13 +45,13 @@ router.post("/query", async (ctx, next) => {
 		port: 5432,
 		sslmode: require
 	});
-//	client.connect();
+	client.connect();
 	const jstring = JSON.stringify(ctx.request.body);
 	const json = JSON.parse(jstring);
 	const basetable = queryConstruct(json);
 	const qandatable = `CREATE TEMP TABLE MyQuery2 AS (SELECT PostTypeId, CASE WHEN ParentOrChild IS NULL THEN 0 END ParentOrChild, COUNT(*) AS answers FROM MyQuery GROUP BY ParentOrChild, PostTypeId);`;
 	const zeroquery = {
-		text: `SELECT CASE WHEN Id NOT IN (SELECT ParentOrChild FROM MyQuery WHERE PostTypeId = 2) THEN 0 ELSE 1 AS include, COUNT(*) FROM MyQuery WHERE include = 0`, //FUCK
+		text: `SELECT COUNT(*) FROM MyQuery WHERE Id NOT IN (SELECT ParentOrChild FROM MyQuery WHERE PostTypeId = 2);`,
 		rowMode: `array`
 	};
 	const qandaquery = {
@@ -84,27 +84,27 @@ router.post("/query", async (ctx, next) => {
 	};
 	console.log("Forming temporary table.");
 	console.log(basetable);
-//	await client.query(basetable);
+	await client.query(basetable);
 	console.log("Temporary table formed.");
+	const res = [];
 	if(json.advsearch == true){
-		const res = [];
 		await client.query(qandatable);
-//		res.push(await client.query(zeroquery));
-//		res.push(await client.query(qandaquery));
-//		res.push(await client.query(viewquery));
-//		res.push(await client.query(unansquery));
-//		res.push(await client.query(astotquery));
+		res.push(await client.query(zeroquery));
+		res.push(await client.query(qandaquery));
+		res.push(await client.query(viewquery));
+		res.push(await client.query(unansquery));
+		res.push(await client.query(astotquery));
 	}
-//	res.push(await client.query(totalquery));
-//	res.push(await client.query(scorequery));
-//	res.push(await client.query(datequery));
-//	console.log(res);
-	ctx.body = [{rows:[[1, 3],[2,8]]},{rows:[[1,2],[3,4]]}];
+	res.push(await client.query(totalquery));
+	res.push(await client.query(scorequery));
+	res.push(await client.query(datequery));
+	console.log(res);
+	ctx.body = res;
 });
 
 app.use( router.routes() );
-app.listen(3000);
-//httpssl.listen(443, err => {if (err) console.log(err); });
+//app.listen(3000);
+httpssl.listen(443, err => {if (err) console.log(err); });
 console.log("Server is listening.");
 
 function queryConstruct(json){

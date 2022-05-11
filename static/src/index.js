@@ -85,7 +85,8 @@ function populateCharts(thisquery, responses){
 		unans = responses[3].rows;
 		unansl = populateRange(thisquery, unans);
 		unansd = populateDates(unans);
-		total = [(responses[5].rows)[0][1]-(responses[4].rows)[0][0]].concat((responses[4].rows)[0][0]).concat((responses[5].rows)[1][1]-(responses[4].rows)[0][0]).concat((responses[4].rows)[0][0]);
+		total = [(responses[5].rows)[0][1]-(responses[4].rows)[0][0]].concat(parseInt((responses[4].rows)[0][0]));
+		total = total.concat((responses[5].rows)[1][1]-(responses[4].rows)[0][0]).concat(parseInt((responses[4].rows)[0][0]));
 		totall = ["Unsatisfied Questions", "Satisfied Questions", "Unaccepted Answers", "Accepted Answers"];
 		score = responses[6].rows;
 		date = responses[7].rows;
@@ -162,9 +163,9 @@ export default class Search extends React.Component {
 
 	handleSubmit = async (event) => {
 		event.preventDefault();
-		//const url = 'https://zcxlabs.redtype.consulting/query'
+		const url = 'https://zcxlabs.redtype.consulting/query'
 		// const url = 'http://ec2-3-94-209-176.compute-1.amazonaws.com:3001/server.js'
-		const url = '/query'
+		//const url = '/query'
 		const options = {
 			method: 'POST',
 			headers: {
@@ -177,16 +178,6 @@ export default class Search extends React.Component {
 			},
 			body: JSON.stringify(this.state)
 		};
-		const config = {
-			headers: {
-				'Accept': '*/*',
-				'Content-Type': 'application/json;charset=UTF-8',
-				'Access-Control-Allow-Origin': '*',
-				'Access-Control-Allow-Headers': 'Origin, X-Requested-With, Content-Type, Accept',
-				'Access-Control-Allow-Methods': 'POST',
-				'Access-Control-Allow-Credentials': true
-			}
-		}
 		const thisquery = this.state;
 		this.setState({hide: true});
 		this.setState({done: false});
@@ -207,11 +198,12 @@ export default class Search extends React.Component {
 			<Doughnut options={opt[0]} data={this.state.charts[0]}/>
 			<Bar options={opt[1]} data={this.state.charts[1]}/>
 			<Line options={opt[2]} data={this.state.charts[2]}/>
-			<div hidden={this.state.hide && this.state.advsearch}>
-				<Bar options={opt[3]} data={this.state.charts[3]}/>
-				<Bar options={opt[4]} data={this.state.charts[4]}/>
-				<Line options={opt[5]} data={this.state.charts[5]}/>
-			</div>
+		</div>
+		let advcharts =
+		<div hidden={this.state.hide && this.state.advsearch}>
+			<Bar options={opt[3]} data={this.state.charts[3]}/>
+			<Bar options={opt[4]} data={this.state.charts[4]}/>
+			<Line options={opt[5]} data={this.state.charts[5]}/>
 		</div>
 //		<div hidden={this.state.display}>
 //			<Doughnut options={opt[0]} data={this.state.charts[0]} ref={chartRef}/>
