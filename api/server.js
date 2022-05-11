@@ -9,7 +9,7 @@ const parser = require('koa-bodyparser');
 const serve = require('koa-static');
 const mount = require('koa-mount');
 const log = require('koa-logger');
-const client = require('pg/lib/native/client');
+const client = require('pg');
 
 const app = new Koa();
 const frontpage = new Koa();
@@ -45,7 +45,7 @@ router.post("/query", async (ctx, next) => {
 		port: 5432,
 		sslmode: require
 	});
-	client.connect();
+//	client.connect();
 	const jstring = JSON.stringify(ctx.request.body);
 	const json = JSON.parse(jstring);
 	const basetable = queryConstruct(json);
@@ -84,28 +84,27 @@ router.post("/query", async (ctx, next) => {
 	};
 	console.log("Forming temporary table.");
 	console.log(basetable);
-	await client.query(basetable);
+//	await client.query(basetable);
 	console.log("Temporary table formed.");
 	if(json.advsearch == true){
 		const res = [];
 		await client.query(qandatable);
-		res.push(await client.query(zeroquery));
-		res.push(await client.query(qandaquery));
-		res.push(await client.query(viewquery));
-		res.push(await client.query(unansquery));
-		res.push(await client.query(astotquery));
+//		res.push(await client.query(zeroquery));
+//		res.push(await client.query(qandaquery));
+//		res.push(await client.query(viewquery));
+//		res.push(await client.query(unansquery));
+//		res.push(await client.query(astotquery));
 	}
-	res.push(await client.query(totalquery));
-	res.push(await client.query(scorequery));
-	res.push(await client.query(datequery));
-	console.log(res);
-	ctx.body = res;
-	console.log(await client.query(`SELECT * FROM MyQuery;`));
+//	res.push(await client.query(totalquery));
+//	res.push(await client.query(scorequery));
+//	res.push(await client.query(datequery));
+//	console.log(res);
+	ctx.body = [{rows:[[1, 3],[2,8]]},{rows:[[1,2],[3,4]]}];
 });
 
 app.use( router.routes() );
-//app.listen(3000);
-httpssl.listen(443, err => {if (err) console.log(err); });
+app.listen(3000);
+//httpssl.listen(443, err => {if (err) console.log(err); });
 console.log("Server is listening.");
 
 function queryConstruct(json){

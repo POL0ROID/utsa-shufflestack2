@@ -85,13 +85,14 @@ function populateCharts(thisquery, responses){
 		unans = responses[3].rows;
 		unansl = populateRange(thisquery, unans);
 		unansd = populateDates(unans);
-		total = [responses[5].rows[0][1]-responses[4].rows[0][0]].concat(responses[4].rows[0][0]).concat(responses[5].rows[1][1]-responses[4].rows[0][0]).concat(responses[4].rows[0][0]);
+		total = [(responses[5].rows)[0][1]-(responses[4].rows)[0][0]].concat((responses[4].rows)[0][0]).concat((responses[5].rows)[1][1]-(responses[4].rows)[0][0]).concat((responses[4].rows)[0][0]);
 		totall = ["Unsatisfied Questions", "Satisfied Questions", "Unaccepted Answers", "Accepted Answers"];
 		score = responses[6].rows;
 		date = responses[7].rows;
 	}
 	else{
-		total = [responses[0].rows[0][1]].concat(responses[0].rows[1][1]);
+		console.log((responses[0].rows)[0][1]);
+		total = [(responses[0].rows)[0][1]].concat((responses[0].rows)[1][1]);
 		totall = ["Questions", "Answers"];
 		score = responses[1].rows;
 		date = responses[2].rows;
@@ -108,9 +109,11 @@ function populateCharts(thisquery, responses){
 		mylabels.push("blah", "blah", "blah")
 		data.push([0], [0], [0])
 	}
+	console.log(mylabels);
+	console.log(data);
 	for(let i=0; i<6; i++){
 		charts.push({
-			labels: scorel,
+			labels: mylabels[i],
 			datasets: [
 				{
 					data: data[i],
@@ -121,66 +124,81 @@ function populateCharts(thisquery, responses){
 	return charts;
 }
 
-
 export default class Search extends React.Component {
 	constructor(props) {
-	super(props);
-	this.state = {
-		includequestion: false,
-		includesatisfied: false,
-		includeunsatisfied: false,
-		viewsmin: "",
-		viewsmax: "",
-		includeanswer: false,
-		includeaccepted: false,
-		includeother: false,
-		datemin: "",
-		scoremin: "",
-		datemax: "",
-		scoremax: "",
-		title: "",
-		body: "",
-		tags: "", 
-		table: "StackExchange",
-		advsearch: false,
-		done: true,
-		hide: true,
-		charts: []
-	};
-	this.handleSubmit = this.handleSubmit.bind(this);
+		super(props);
+		this.state = {
+			includequestion: false,
+			includesatisfied: false,
+			includeunsatisfied: false,
+			viewsmin: "",
+			viewsmax: "",
+			includeanswer: false,
+			includeaccepted: false,
+			includeother: false,
+			datemin: "",
+			scoremin: "",
+			datemax: "",
+			scoremax: "",
+			title: "",
+			body: "",
+			tags: "", 
+			table: "writers",
+			advsearch: false,
+			done: true,
+			hide: true,
+			charts: []
+		};
+		this.handleSubmit = this.handleSubmit.bind(this);
 	}
 
 	handleChange = (event) => {
-	let t = {};
-	const target = event.target;
-	const value = (target.type === 'checkbox') ? target.checked : target.value;
-	t[target.id] = value;
-	this.setState( { ...t } );
+		let t = {};
+		const target = event.target;
+		const value = (target.type === 'checkbox') ? target.checked : target.value;
+		t[target.id] = value;
+		this.setState( { ...t } );
 	}
 
 	handleSubmit = async (event) => {
-	event.preventDefault();
-	const url = 'https://zcxlabs.redtype.consulting/query'
-	// const url = 'http://ec2-3-94-209-176.compute-1.amazonaws.com:3001/server.js'
-	// const url = 'localhost:3001/server.js'
-	const options = {
-		method: 'POST',
-		headers: {
-		'Accept': '*/*',
-		'Content-Type': 'application/json;charset=UTF-8',
-		'Access-Control-Allow-Origin': '*',
-		'Access-Control-Allow-Headers': 'Origin, X-Requested-With, Content-Type, Accept',
-		'Access-Control-Allow-Methods': 'POST',
-		'Access-Control-Allow-Credentials': true,
-		},
-		body: JSON.stringify(this.state)
-	};
-	const thisquery = this.state;
-	const res =
-	await fetch(url, options)
-		.then(response => res);
-	console.log(res[0].rows);
-	this.state.charts = populateCharts(thisquery, res);
+		event.preventDefault();
+		//const url = 'https://zcxlabs.redtype.consulting/query'
+		// const url = 'http://ec2-3-94-209-176.compute-1.amazonaws.com:3001/server.js'
+		const url = '/query'
+		const options = {
+			method: 'POST',
+			headers: {
+			'Accept': '*/*',
+			'Content-Type': 'application/json;charset=UTF-8',
+			'Access-Control-Allow-Origin': '*',
+			'Access-Control-Allow-Headers': 'Origin, X-Requested-With, Content-Type, Accept',
+			'Access-Control-Allow-Methods': 'POST',
+			'Access-Control-Allow-Credentials': true
+			},
+			body: JSON.stringify(this.state)
+		};
+		const config = {
+			headers: {
+				'Accept': '*/*',
+				'Content-Type': 'application/json;charset=UTF-8',
+				'Access-Control-Allow-Origin': '*',
+				'Access-Control-Allow-Headers': 'Origin, X-Requested-With, Content-Type, Accept',
+				'Access-Control-Allow-Methods': 'POST',
+				'Access-Control-Allow-Credentials': true
+			}
+		}
+		const thisquery = this.state;
+		this.setState({hide: true});
+		this.setState({done: false});
+		await fetch(url, options)
+			.then(res => res.json())
+			.then(data => {
+				this.state.charts = data;
+			});
+		console.log(this.state.charts);
+		populateCharts(thisquery, this.state.charts);
+		this.setState({done: true});
+		this.setState({hide: false});
 	}
 
 	render() {
@@ -260,10 +278,8 @@ export default class Search extends React.Component {
 							<option value="patents">Ask Patents</option>
 							<option value="askubuntu">Ask Ubuntu</option>
 							<option value="astronomy">Astronomy</option>
-							<option value="aviation">Aviation</option>
 							<option value="alcohol">Beer, Wine & Spirits</option>
 							<option value="hermeneutics">Biblical Hermeneutics</option>
-							<option value="biology">Biology</option>
 							<option value="blender">Blender</option>
 							<option value="boardgames">Board & Card Games</option>
 							<option value="chemistry">Chemistry</option>
@@ -281,13 +297,8 @@ export default class Search extends React.Component {
 							<option value="craftcms">Craft CMS</option>
 							<option value="stats">Cross Validated</option>
 							<option value="crypto">Cryptography</option>
-							<option value="datascience">Data Science</option>
 							<option value="dba">Database Administrators</option>
-							<option value="devops">DevOps</option>
-							<option value="drones">Drones and Model Aircraft</option>
 							<option value="drupal">Drupal Answers</option>
-							<option value="earthscience">Earth Science</option>
-							<option value="ebooks">Ebooks</option>
 							<option value="economics">Economics</option>
 							<option value="electronics">Electric Engineering</option>
 							<option value="engineering">Engineering</option>
@@ -342,7 +353,7 @@ export default class Search extends React.Component {
 							<option value="worldbuilding">Worldbuilding</option>
 							<option value="writers">Writers</option></optgroup>
 							</select></div>
-						<input type="submit" name="submit" id="submit" value="Submit"></input><label hidden = {this.state.done}>Loading...</label>
+						<input type="submit" name="submit" id="submit" value="Submit"></input><label hidden = {this.state.done}>Loading...</label><label hidden = {this.state.hide}>Done.</label>
 					</form>
 				</div>
 				{this.state.charts.length > 0 && charts}
