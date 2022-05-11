@@ -59,7 +59,7 @@ router.post("/query", async (ctx) => {
 		rowMode: `array`
 	};
 	const viewquery = {
-		text: `SELECT ViewCount, COUNT(*) FROM MyQuery WHERE ViewCount IS NOT NULL GROUP BY ViewCount ORDER BY ViewCount;`,
+		text: `SELECT NewCount AS ViewCount, COUNT(*) FROM MyQuery WHERE NewCount IS NOT NULL GROUP BY ViewCount ORDER BY ViewCount;`,
 		rowMode: `array`
 	};
 	const unansquery = {

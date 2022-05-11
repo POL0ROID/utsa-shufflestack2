@@ -8,6 +8,7 @@
     "@testing-library/user-event": "^13.5.0",
     "axios": "^0.27.2",
     "chart.js": "^3.7.1",
+    "chartjs-plugin-zoom": "^1.2.1",
     "crypto": "^1.0.1",
     "dns": "^0.2.2",
     "dom": "^0.0.3",
