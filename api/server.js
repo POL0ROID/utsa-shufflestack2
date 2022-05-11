@@ -32,11 +32,11 @@ app.use( log() );
 
 const router = new Router();
 
-//router.get("/", async (ctx, next) => {
-//	console.log("Get received.");
-//});
+router.get("/", async (ctx) => {
+	console.log("Get received.");
+});
 
-router.post("/query", async (ctx, next) => {
+router.post("/query", async (ctx) => {
 	const client = new Client({
 		user: 'Flamdini',
 		host: 'stackpost.crymkd1bcdxk.us-east-1.rds.amazonaws.com',
@@ -51,7 +51,7 @@ router.post("/query", async (ctx, next) => {
 	const basetable = queryConstruct(json);
 	const qandatable = `CREATE TEMP TABLE MyQuery2 AS (SELECT PostTypeId, CASE WHEN ParentOrChild IS NULL THEN 0 END ParentOrChild, COUNT(*) AS answers FROM MyQuery GROUP BY ParentOrChild, PostTypeId);`;
 	const zeroquery = {
-		text: `SELECT COUNT(*) FROM MyQuery WHERE Id NOT IN (SELECT ParentOrChild FROM MyQuery WHERE PostTypeId = 2);`,
+		text: `SELECT COUNT(*) FROM MyQuery WHERE Id NOT IN (SELECT ParentOrChild FROM MyQuery WHERE PostTypeId = 2) AND PostTypeId = 1;`,
 		rowMode: `array`
 	};
 	const qandaquery = {
@@ -195,50 +195,50 @@ function fieldInjector(textarray, field, boolq, boola){
 
 function viewgroupInjector(){
 	const outstring = `CASE WHEN ViewCOUNT IS NULL THEN NULL ` +
-				`WHEN ViewCount BETWEEN 0 AND 99 THEN 100 ` +
-				`WHEN ViewCount BETWEEN 100 AND 199 THEN 200 ` +
-				`WHEN ViewCount BETWEEN 200 AND 299 THEN 300 ` +
-				`WHEN ViewCount BETWEEN 300 AND 399 THEN 400 ` + 
-				`WHEN ViewCount BETWEEN 400 AND 499 THEN 500 ` +
-				`WHEN ViewCount BETWEEN 500 AND 599 THEN 600 ` +
-				`WHEN ViewCount BETWEEN 600 AND 699 THEN 700 ` +
-				`WHEN ViewCount BETWEEN 700 AND 799 THEN 800 ` +
-				`WHEN ViewCount BETWEEN 800 AND 899 THEN 900 ` +
-				`WHEN ViewCount BETWEEN 900 AND 999 THEN 1000 ` +
-				`WHEN ViewCount BETWEEN 1000 AND 1999 THEN 2000 ` +
-				`WHEN ViewCount BETWEEN 2000 AND 2999 THEN 3000 ` +
-				`WHEN ViewCount BETWEEN 3000 AND 3999 THEN 4000 ` +
-				`WHEN ViewCount BETWEEN 4000 AND 4999 THEN 5000 ` +
-				`WHEN ViewCount BETWEEN 5000 AND 5999 THEN 6000 ` +
-				`WHEN ViewCount BETWEEN 6000 AND 6999 THEN 7000 ` +
-				`WHEN ViewCount BETWEEN 7000 AND 7999 THEN 8000 ` +
-				`WHEN ViewCount BETWEEN 8000 AND 8999 THEN 9000 ` +
-				`WHEN ViewCount BETWEEN 9000 AND 9999 THEN 10000 ` +
-				`WHEN ViewCount BETWEEN 10000 AND 10999 THEN 11000 ` +
-				`WHEN ViewCount BETWEEN 11000 AND 11999 THEN 12000 ` +
-				`WHEN ViewCount BETWEEN 12000 AND 12999 THEN 13000 ` +
-				`WHEN ViewCount BETWEEN 13000 AND 13999 THEN 14000 ` +
-				`WHEN ViewCount BETWEEN 14000 AND 14999 THEN 15000 ` +
-				`WHEN ViewCount BETWEEN 15000 AND 15999 THEN 16000 ` +
-				`WHEN ViewCount BETWEEN 16000 AND 16999 THEN 17000 ` +
-				`WHEN ViewCount BETWEEN 17000 AND 17999 THEN 18000 ` +
-				`WHEN ViewCount BETWEEN 18000 AND 18999 THEN 19000 ` +
-				`WHEN ViewCount BETWEEN 19000 AND 19999 THEN 20000 ` +
-				`WHEN ViewCount BETWEEN 20000 AND 21999 THEN 22000 ` +
-				`WHEN ViewCount BETWEEN 22000 AND 23999 THEN 24000 ` +
-				`WHEN ViewCount BETWEEN 24000 AND 25999 THEN 26000 ` +
-				`WHEN ViewCount BETWEEN 26000 AND 27999 THEN 28000 ` +
-				`WHEN ViewCount BETWEEN 28000 AND 29999 THEN 30000 ` +
-				`WHEN ViewCount BETWEEN 30000 AND 39999 THEN 40000 ` +
-				`WHEN ViewCount BETWEEN 40000 AND 59999 THEN 60000 ` +
-				`WHEN ViewCount BETWEEN 60000 AND 79999 THEN 80000 ` +
-				`WHEN ViewCount BETWEEN 80000 AND 99999 THEN 100000 ` +
-				`WHEN ViewCount BETWEEN 100000 AND 119999 THEN 120000 ` +
-				`WHEN ViewCount BETWEEN 120000 AND 139999 THEN 140000 ` +
-				`WHEN ViewCount BETWEEN 140000 AND 159999 THEN 160000 ` +
-				`WHEN ViewCount BETWEEN 160000 AND 179999 THEN 180000 ` +
-				`WHEN ViewCount BETWEEN 180000 AND 199999 THEN 200000 ` +
-				`WHEN ViewCount BETWEEN 200000 AND 299999 THEN 300000 ` +
-				`ELSE 99999999 END ViewCount`;
+				`WHEN ViewCount BETWEEN 0 AND 99 THEN '<100' ` +
+				`WHEN ViewCount BETWEEN 100 AND 199 THEN '<200' ` +
+				`WHEN ViewCount BETWEEN 200 AND 299 THEN '<300' ` +
+				`WHEN ViewCount BETWEEN 300 AND 399 THEN '<400' ` + 
+				`WHEN ViewCount BETWEEN 400 AND 499 THEN '<500' ` +
+				`WHEN ViewCount BETWEEN 500 AND 599 THEN '<600' ` +
+				`WHEN ViewCount BETWEEN 600 AND 699 THEN '<700' ` +
+				`WHEN ViewCount BETWEEN 700 AND 799 THEN '<800' ` +
+				`WHEN ViewCount BETWEEN 800 AND 899 THEN '<900' ` +
+				`WHEN ViewCount BETWEEN 900 AND 999 THEN '<1000' ` +
+				`WHEN ViewCount BETWEEN 1000 AND 1999 THEN '<2000' ` +
+				`WHEN ViewCount BETWEEN 2000 AND 2999 THEN '<3000' ` +
+				`WHEN ViewCount BETWEEN 3000 AND 3999 THEN '<4000' ` +
+				`WHEN ViewCount BETWEEN 4000 AND 4999 THEN '<5000' ` +
+				`WHEN ViewCount BETWEEN 5000 AND 5999 THEN '<6000' ` +
+				`WHEN ViewCount BETWEEN 6000 AND 6999 THEN '<7000' ` +
+				`WHEN ViewCount BETWEEN 7000 AND 7999 THEN '<8000' ` +
+				`WHEN ViewCount BETWEEN 8000 AND 8999 THEN '<9000' ` +
+				`WHEN ViewCount BETWEEN 9000 AND 9999 THEN '<10000' ` +
+				`WHEN ViewCount BETWEEN 10000 AND 10999 THEN '<11000' ` +
+				`WHEN ViewCount BETWEEN 11000 AND 11999 THEN '<12000' ` +
+				`WHEN ViewCount BETWEEN 12000 AND 12999 THEN '<13000' ` +
+				`WHEN ViewCount BETWEEN 13000 AND 13999 THEN '<14000' ` +
+				`WHEN ViewCount BETWEEN 14000 AND 14999 THEN '<15000' ` +
+				`WHEN ViewCount BETWEEN 15000 AND 15999 THEN '<16000' ` +
+				`WHEN ViewCount BETWEEN 16000 AND 16999 THEN '<17000' ` +
+				`WHEN ViewCount BETWEEN 17000 AND 17999 THEN '<18000' ` +
+				`WHEN ViewCount BETWEEN 18000 AND 18999 THEN '<19000' ` +
+				`WHEN ViewCount BETWEEN 19000 AND 19999 THEN '<20000' ` +
+				`WHEN ViewCount BETWEEN 20000 AND 21999 THEN '<22000' ` +
+				`WHEN ViewCount BETWEEN 22000 AND 23999 THEN '<24000' ` +
+				`WHEN ViewCount BETWEEN 24000 AND 25999 THEN '<26000' ` +
+				`WHEN ViewCount BETWEEN 26000 AND 27999 THEN '<28000' ` +
+				`WHEN ViewCount BETWEEN 28000 AND 29999 THEN '<30000' ` +
+				`WHEN ViewCount BETWEEN 30000 AND 39999 THEN '<40000' ` +
+				`WHEN ViewCount BETWEEN 40000 AND 59999 THEN '<60000' ` +
+				`WHEN ViewCount BETWEEN 60000 AND 79999 THEN '<80000' ` +
+				`WHEN ViewCount BETWEEN 80000 AND 99999 THEN '<100000' ` +
+				`WHEN ViewCount BETWEEN 100000 AND 119999 THEN '<120000' ` +
+				`WHEN ViewCount BETWEEN 120000 AND 139999 THEN '<140000' ` +
+				`WHEN ViewCount BETWEEN 140000 AND 159999 THEN '<160000' ` +
+				`WHEN ViewCount BETWEEN 160000 AND 179999 THEN '<180000' ` +
+				`WHEN ViewCount BETWEEN 180000 AND 199999 THEN '<200000' ` +
+				`WHEN ViewCount BETWEEN 200000 AND 299999 THEN '<300000' ` +
+				`ELSE '>300000' END NewCount`;
 	return outstring;
 }

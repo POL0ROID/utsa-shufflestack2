@@ -5,6 +5,7 @@ import ReactDOM from 'react-dom/client';
 import './index.css';
 import './App.css';
 import reportWebVitals from './reportWebVitals';
+import 'chartjs-plugin-zoom';
 
 ChartJS.register(CategoryScale, LinearScale, BarElement, ArcElement, PointElement, LineElement, Title, Tooltip, Legend);
 
@@ -17,19 +18,34 @@ const opt = [
 	"Unanswered Questions Over Time"
 ]
 	.map(str => ({
-	plugins: {
-		title: {
-		display: true,
-		text: str,
+		plugins: {
+			title: {
+				display: true,
+				text: str,
+			},
+			zoom: {
+				wheel: {
+					enabled: true
+				},
+				pinch: {
+					enabled: true
+				},
+				mode: 'xy'
+			},
+			pan: {
+				enabled: true,
+				mode: 'xy'
+			}
 		},
-	},
 	}));
 
-function populateLabels(thisquery, response){
-	const min = Math.min(response[0][0], thisquery.scoremin);
-	const max = Math.max(response[response.length - 1][0], thisquery.scoremax);
+function populateLabels(response, min, max){
+	min = min != null ? min : -99999;
+	max = max != null ? max : 99999;
+	const mymin = Math.max(parseInt(response[0][0]), min);
+	const mymax = Math.min(parseInt(response[response.length - 1][0]), max);
 	let range = [];
-	for(let i=min; i<max+1; i++){
+	for(let i=mymin; i<mymax+1; i++){
 		range.push(i);
 	}
 	return range;
@@ -47,18 +63,19 @@ function populateDates(response){
 }
 
 function populateRange(thisquery, response){
-	const yearmin = Math.min(response[0][0], parseInt(thisquery.datemin.slice(0,4)));
-	const monthmin = Math.min(response[0][1], parseInt(thisquery.datemin.slice(5,7)));
-	const yearmax = Math.min(response[response.length-1][0], parseInt(thisquery.datemax.slice(0,4)));
-	const monthmax = Math.min(response[response.length-1][1], parseInt(thisquery.datemax.slice(5,7)));
-	const yearrange = yearmax - yearmin;
-	const monthrange = monthmax - monthmin;
-	const range = [];
-	if(yearmin != yearmax){
-		for(let i=monthmin; i<(yearrange*12+monthrange+monthmin); i++){
-			range.push(`${yearmin+(Math.floor(i/12))}-${i%12 == 0 ? 12 : i%12}`);
-		}
-	}	
+	let datemin = thisquery.datemin != "" ? thisquery.datemin : "2008-01-01T01:01:01";
+	let datemax = thisquery.datemax != "" ? thisquery.datemax : "2022-03-31T23:59:59";
+	let yearmin = Math.max(parseInt(response[0][0]), parseInt(datemin.slice(0,4)));
+	let monthmin = Math.max(parseInt(response[0][1]), parseInt(datemin.slice(5,7)));
+	let yearmax = Math.min(parseInt(response[response.length-1][0]), parseInt(datemax.slice(0,4)));
+	let monthmax = Math.min(parseInt(response[response.length-1][1]), parseInt(datemax.slice(5,7)));
+	let yearrange = yearmax - yearmin;
+	let monthrange = monthmax - monthmin;
+	let range = [""];
+	range.pop();
+	for(let i=monthmin; i<(yearrange*12+monthrange+monthmin); i++){
+		range.push(`${yearmin+(Math.floor(i/12))}-${i%12 == 0 ? 12 : i%12}`);
+	}
 	return range;
 }
 
@@ -78,30 +95,32 @@ function populateCharts(thisquery, responses){
 	let score = [];
 	let date = [];
 	if(responses.length > 3){
-		ansc = (responses[0].rows).concat(responses[1].rows);
-		anscl = populateLabels(thisquery, ansc);
-		view = responses[2].rows;
+		let zeros = responses[0].rows[0][0];
+		ansc = ((([(['0'].concat(responses[0].rows[0][0]))]).concat(responses[1].rows)).map(elem => [parseInt(elem[0], 10), parseInt(elem[1], 10)]));
+		anscl = populateLabels(ansc, 0, 99999);
+		view = responses[2].rows.map(elem => [parseInt(elem[0], 10), parseInt(elem[1], 10)]);
+		console.log(view);
 		viewl = [100, 200, 300, 400, 500, 600, 700, 800, 900, 1000, 2000, 3000, 4000, 5000, 6000, 7000, 8000, 9000, 10000, 11000, 12000, 13000, 14000, 15000, 16000, 17000, 18000, 19000, 20000, 22000, 24000, 26000, 28000, 30000, 40000, 60000, 80000, 100000, 120000, 140000, 160000, 180000, 200000, 300000, 99999999];
 		unans = responses[3].rows;
 		unansl = populateRange(thisquery, unans);
-		unansd = populateDates(unans);
-		total = [(responses[5].rows)[0][1]-(responses[4].rows)[0][0]].concat(parseInt((responses[4].rows)[0][0]));
-		total = total.concat((responses[5].rows)[1][1]-(responses[4].rows)[0][0]).concat(parseInt((responses[4].rows)[0][0]));
+		unansd = populateDates(unans).map(elem => [parseInt(elem[0], 10), parseInt(elem[1], 10)]);
+		total = [([(responses[5].rows)[0][1]]-[(responses[4].rows)[0][0]])].concat(parseInt((responses[4].rows)[0][0]));
+		total = total.concat([(responses[5].rows)[1][1]]-(responses[4].rows)[0][0]).concat(parseInt((responses[4].rows)[0][0]));
 		totall = ["Unsatisfied Questions", "Satisfied Questions", "Unaccepted Answers", "Accepted Answers"];
-		score = responses[6].rows;
+		score = (responses[6].rows).map(elem => [parseInt(elem[0], 10), parseInt(elem[1], 10)]);
 		date = responses[7].rows;
 	}
 	else{
-		console.log((responses[0].rows)[0][1]);
 		total = [(responses[0].rows)[0][1]].concat((responses[0].rows)[1][1]);
 		totall = ["Questions", "Answers"];
-		score = responses[1].rows;
+		score = (responses[1].rows).map(elem => [parseInt(elem[0], 10), parseInt(elem[1], 10)]);
 		date = responses[2].rows;
 	}
-	const scorel = populateLabels(thisquery, score);
-	const datel = populateRange(thisquery, date);
+	let scorel = populateLabels(score, thisquery.scoremin, thisquery.scoremax);
+	let datel = populateRange(thisquery, date);
+	let dated = (populateDates(date)).map(elem => [elem[0], parseInt(elem[1], 10)]);
 	mylabels.push(totall, scorel, datel);
-	data.push(total, score, date);
+	data.push(total, score, dated);
 	if(responses.length > 3){
 		mylabels.push(anscl, viewl, unansl);
 		data.push(ansc, view, unansd);
@@ -110,9 +129,7 @@ function populateCharts(thisquery, responses){
 		mylabels.push("blah", "blah", "blah")
 		data.push([0], [0], [0])
 	}
-	console.log(mylabels);
-	console.log(data);
-	for(let i=0; i<6; i++){
+	for(let i=0; i<responses.length; i++){
 		charts.push({
 			labels: mylabels[i],
 			datasets: [
@@ -125,22 +142,22 @@ function populateCharts(thisquery, responses){
 	return charts;
 }
 
-export default class Search extends React.Component {
+export default class Search extends Component {
 	constructor(props) {
 		super(props);
 		this.state = {
 			includequestion: false,
 			includesatisfied: false,
 			includeunsatisfied: false,
-			viewsmin: "",
-			viewsmax: "",
+			viewsmin: null,
+			viewsmax: null,
 			includeanswer: false,
 			includeaccepted: false,
 			includeother: false,
 			datemin: "",
-			scoremin: "",
+			scoremin: null,
 			datemax: "",
-			scoremax: "",
+			scoremax: null,
 			title: "",
 			body: "",
 			tags: "", 
@@ -155,8 +172,8 @@ export default class Search extends React.Component {
 
 	handleChange = (event) => {
 		let t = {};
-		const target = event.target;
-		const value = (target.type === 'checkbox') ? target.checked : target.value;
+		let target = event.target;
+		let value = (target.type === 'checkbox') ? target.checked : target.value;
 		t[target.id] = value;
 		this.setState( { ...t } );
 	}
@@ -178,7 +195,7 @@ export default class Search extends React.Component {
 			},
 			body: JSON.stringify(this.state)
 		};
-		const thisquery = this.state;
+		let thisquery = this.state;
 		this.setState({hide: true});
 		this.setState({done: false});
 		await fetch(url, options)
@@ -186,8 +203,7 @@ export default class Search extends React.Component {
 			.then(data => {
 				this.state.charts = data;
 			});
-		console.log(this.state.charts);
-		populateCharts(thisquery, this.state.charts);
+		this.state.charts = populateCharts(thisquery, this.state.charts);
 		this.setState({done: true});
 		this.setState({hide: false});
 	}
@@ -205,16 +221,6 @@ export default class Search extends React.Component {
 			<Bar options={opt[4]} data={this.state.charts[4]}/>
 			<Line options={opt[5]} data={this.state.charts[5]}/>
 		</div>
-//		<div hidden={this.state.display}>
-//			<Doughnut options={opt[0]} data={this.state.charts[0]} ref={chartRef}/>
-//			<Bar options={opt[1]} data={this.state.charts[1]} ref={chartRef}/>
-//			<Line options={opt[2]} data={this.state.charts[2]} ref={chartRef}/>
-//			<div hidden={this.state.display && this.state.advsearch}>
-//				<Bar options={opt[3]} data={this.state.charts[3]} ref={chartRef}/>
-//				<Bar options={opt[4]} data={this.state.charts[4]} ref={chartRef}/>
-//				<Line options={opt[5]} data={this.state.charts[5]} ref={chartRef}/>
-//			</div>
-//		</div>;
 		console.log("Current state:" , this.state);
 		return (
 			<body style={{backgroundColor: '#282c34', margin: '0',
@@ -237,8 +243,8 @@ export default class Search extends React.Component {
 							<input type="checkbox" name="includesatisfied" id="includesatisfied" value={this.state.includesatisfied} onChange={this.handleChange}/><label>Satisfied</label>
 							<input type="checkbox" name="includeunsatisfied" id="includeunsatisfied" value={this.state.includeunsatisfied} onChange={this.handleChange}/><label>Unsatisfied</label><br />
 							<label>Views Range:</label>
-							<div><input type="text" size="3" name="viewsmin" id="viewsmin" value={this.state.viewsmin} onChange={this.handleChange}/>
-							<label>=&gt;</label><input type="text" size="3" name="viewsmax" id="viewsmax" value={this.state.viewsmax} onChange={this.handleChange}/></div>
+							<div><input type="number" rows="1" name="viewsmin" id="viewsmin" value={this.state.viewsmin} onChange={this.handleChange}/>
+							<label>=&gt;</label><input type="number" rows="1" name="viewsmax" id="viewsmax" value={this.state.viewsmax} onChange={this.handleChange}/></div>
 							<label>Tags:</label><div><textarea name="tags" id="tags" rows="1" value={this.state.tags} onChange={this.handleChange}/></div>
 							<label>Title:</label><div><textarea name="title" id="title" rows="1" value={this.state.title} onChange={this.handleChange}/></div>
 						<hr />
@@ -251,8 +257,8 @@ export default class Search extends React.Component {
 						<div><input type="datetime-local" name="datemin" id="datemin" value={this.state.datemin} onChange={this.handleChange}/>
 						<label>=&gt;</label><input type="datetime-local" name="datemax" id="datemax" value={this.state.datemax} onChange={this.handleChange}/></div>
 						<label>Score Range:</label>
-						<div><input type="text" size="3" name="scoremin" id="scoremin" value={this.state.scoremin} onChange={this.handleChange}/>
-						<label>=&gt;</label><input type="text" size="3" name="scoremax" id="scoremax" value={this.state.scoremax} onChange={this.handleChange}/></div>
+						<div><input type="number" rows="1" name="scoremin" id="scoremin" value={this.state.scoremin} onChange={this.handleChange}/>
+						<label>=&gt;</label><input type="number" rows="1" name="scoremax" id="scoremax" value={this.state.scoremax} onChange={this.handleChange}/></div>
 						<label>Body:</label>
 						<div><textarea name="body" id="body" rows="1" value={this.state.body} onChange={this.handleChange}/></div>
 						<label>Category</label><div><select name="table" id="table" value={this.state.table} onChange={this.handleChange} required>
@@ -348,7 +354,8 @@ export default class Search extends React.Component {
 						<input type="submit" name="submit" id="submit" value="Submit"></input><label hidden = {this.state.done}>Loading...</label><label hidden = {this.state.hide}>Done.</label>
 					</form>
 				</div>
-				{this.state.charts.length > 0 && charts}
+				{this.state.charts.length > 0 && charts }
+				{this.state.charts.length > 3 && advcharts }
 			</body>
 		);
 	}
