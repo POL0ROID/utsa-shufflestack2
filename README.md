@@ -1,3 +1,3 @@
 # Shufflestack
 
-https://studio.youtube.com/video/zCffqpkZ0jY/edit
+https://youtu.be/zCffqpkZ0jY
